@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeCheck – PSA-Unterweisung Rohrreinigung</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+
+  :root {
+    --gelb: #F5C400;
+    --dunkel: #1A1A2E;
+    --anthrazit: #2D2D44;
+    --grau: #6B7280;
+    --hellgrau: #F3F4F6;
+    --weiss: #FFFFFF;
+    --gruen: #16A34A;
+    --rot: #DC2626;
+    --orange: #EA580C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--hellgrau);
+    color: var(--dunkel);
+    min-height: 100vh;
+  }
+
+  /* SCREENS */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* HEADER */
+  .header {
+    background: var(--dunkel);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--weiss);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--gelb); }
+  .badge {
+    background: var(--gelb);
+    color: var(--dunkel);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--anthrazit);
+    padding: 10px 20px;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 4px;
+    background: #3D3D5C;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gelb);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  /* CONTENT */
+  .content {
+    flex: 1;
+    padding: 24px 20px;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* WELCOME SCREEN */
+  .welcome-hero {
+    background: var(--dunkel);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: var(--gelb);
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+  .kurs-tag {
+    display: inline-block;
+    background: rgba(245,196,0,0.15);
+    border: 1px solid rgba(245,196,0,0.3);
+    color: var(--gelb);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .welcome-hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--weiss);
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .welcome-hero p {
+    font-size: 14px;
+    color: #9CA3AF;
+    line-height: 1.6;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .info-card {
+    background: var(--weiss);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid #E5E7EB;
+  }
+  .info-card .icon { font-size: 22px; margin-bottom: 6px; }
+  .info-card .zahl {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dunkel);
+  }
+  .info-card .text {
+    font-size: 11px;
+    color: var(--grau);
+    margin-top: 2px;
+  }
+
+  .module-liste {
+    background: var(--weiss);
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .module-liste-header {
+    padding: 14px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--grau);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #E5E7EB;
+    background: var(--hellgrau);
+  }
+  .modul-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .modul-item:last-child { border-bottom: none; }
+  .modul-num {
+    width: 28px; height: 28px;
+    background: var(--dunkel);
+    color: var(--gelb);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .modul-info { flex: 1; }
+  .modul-name { font-size: 14px; font-weight: 600; color: var(--dunkel); }
+  .modul-dauer { font-size: 12px; color: var(--grau); margin-top: 2px; }
+
+  /* NAME INPUT */
+  .name-section {
+    background: var(--weiss);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #E5E7EB;
+    margin-bottom: 24px;
+  }
+  .name-section label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dunkel);
+    margin-bottom: 8px;
+  }
+  .name-section input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .name-section input:focus { border-color: var(--gelb); }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--gelb);
+    color: var(--dunkel);
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: var(--weiss);
+    color: var(--dunkel);
+    border: 2px solid #E5E7EB;
+    margin-top: 12px;
+  }
+
+  /* LERNEINHEIT */
+  .einheit-header {
+    margin-bottom: 20px;
+  }
+  .einheit-tag {
+    display: inline-block;
+    background: rgba(245,196,0,0.12);
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .einheit-titel {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dunkel);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .einheit-untertitel {
+    font-size: 14px;
+    color: var(--grau);
+    line-height: 1.5;
+  }
+
+  .video-placeholder {
+    background: var(--dunkel);
+    border-radius: 12px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .video-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+  }
+  .play-btn {
+    width: 56px; height: 56px;
+    background: var(--gelb);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 20px rgba(245,196,0,0.4);
+  }
+  .play-btn svg { margin-left: 4px; }
+  .video-label {
+    position: relative; z-index: 1;
+    color: #9CA3AF;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  .lerninhalt {
+    background: var(--weiss);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #E5E7EB;
+    margin-bottom: 20px;
+  }
+  .lerninhalt h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dunkel);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lerninhalt p {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .lerninhalt p:last-child { margin-bottom: 0; }
+
+  .psa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .psa-item {
+    background: var(--hellgrau);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dunkel);
+  }
+  .psa-item .dot {
+    width: 8px; height: 8px;
+    background: var(--gelb);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .wichtig-box {
+    background: #FEF3C7;
+    border: 1px solid #FCD34D;
+    border-left: 4px solid var(--gelb);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+  .wichtig-box .wichtig-titel {
+    font-size: 12px;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .wichtig-box p {
+    font-size: 13px;
+    color: #78350F;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* QUIZ */
+  .quiz-header {
+    background: var(--dunkel);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .quiz-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--weiss);
+    margin-bottom: 6px;
+  }
+  .quiz-header p { font-size: 13px; color: #9CA3AF; }
+
+  .quiz-frage-wrap { margin-bottom: 24px; }
+  .frage-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--grau);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .frage-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dunkel);
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+
+  .antworten { display: flex; flex-direction: column; gap: 10px; }
+  .antwort-btn {
+    padding: 14px 16px;
+    border: 2px solid #E5E7EB;
+    border-radius: 10px;
+    background: var(--weiss);
+    text-align: left;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--dunkel);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .antwort-btn .kreis {
+    width: 20px; height: 20px;
+    border: 2px solid #D1D5DB;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .antwort-btn:active { transform: scale(0.99); }
+  .antwort-btn.selected {
+    border-color: var(--dunkel);
+    background: var(--dunkel);
+    color: var(--weiss);
+  }
+  .antwort-btn.selected .kreis {
+    border-color: var(--gelb);
+    background: var(--gelb);
+  }
+  .antwort-btn.richtig {
+    border-color: var(--gruen);
+    background: #F0FDF4;
+    color: var(--dunkel);
+  }
+  .antwort-btn.falsch {
+    border-color: var(--rot);
+    background: #FEF2F2;
+    color: var(--dunkel);
+  }
+
+  .feedback-box {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 12px;
+    display: none;
+  }
+  .feedback-box.richtig {
+    background: #F0FDF4;
+    color: #166534;
+    border: 1px solid #BBF7D0;
+    display: block;
+  }
+  .feedback-box.falsch {
+    background: #FEF2F2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+    display: block;
+  }
+
+  /* ERGEBNIS */
+  .ergebnis-hero {
+    text-align: center;
+    padding: 32px 20px 24px;
+  }
+  .ergebnis-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .ergebnis-hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--dunkel);
+    margin-bottom: 8px;
+  }
+  .ergebnis-hero p {
+    font-size: 15px;
+    color: var(--grau);
+    line-height: 1.5;
+  }
+
+  .score-card {
+    background: var(--dunkel);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .score-zahl {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--gelb);
+    line-height: 1;
+  }
+  .score-label { color: #9CA3AF; font-size: 14px; margin-top: 6px; }
+
+  /* ZERTIFIKAT */
+  .zertifikat {
+    background: var(--weiss);
+    border-radius: 16px;
+    border: 2px solid var(--dunkel);
+    padding: 28px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .zertifikat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--gelb);
+  }
+  .zertifikat::after {
+    content: '✓';
+    position: absolute;
+    bottom: -20px; right: -10px;
+    font-size: 100px;
+    color: var(--hellgrau);
+    font-weight: 900;
+    line-height: 1;
+  }
+  .zert-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dunkel);
+    margin-bottom: 16px;
+  }
+  .zert-logo span { color: var(--gelb); }
+  .zert-titel {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--grau);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .zert-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dunkel);
+    margin-bottom: 16px;
+  }
+  .zert-details { display: flex; flex-direction: column; gap: 6px; }
+  .zert-zeile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .zert-zeile strong { color: var(--dunkel); }
+  .zert-datum {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #E5E7EB;
+    font-size: 12px;
+    color: var(--grau);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* NAV BOTTOM */
+  .nav-bottom {
+    padding: 16px 20px;
+    background: var(--weiss);
+    border-top: 1px solid #E5E7EB;
+    position: sticky;
+    bottom: 0;
+  }
+
+  /* HELPERS */
+  .spacer { height: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ============ SCREEN 0: WELCOME ============ -->
+<div class="screen active" id="screen-welcome">
+  <div class="header">
+    <div class="logo">Safe<span>Check</span></div>
+    <div class="badge">Demo</div>
+  </div>
+  <div class="content">
+    <div class="welcome-hero">
+      <div class="kurs-tag">Pflichtunterweisung · § 12 ArbSchG</div>
+      <h1>PSA-Grundlagen &amp; Arbeitssicherheit<br>Rohrreinigung</h1>
+      <p>Nur für dich zugeschnitten – basierend auf deiner Tätigkeit im Betrieb.</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="icon">⏱️</div>
+        <div class="zahl">~20 Min</div>
+        <div class="text">Dauer</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">📱</div>
+        <div class="zahl">3 Einheiten</div>
+        <div class="text">+ Abschlussquiz</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🏆</div>
+        <div class="zahl">Zertifikat</div>
+        <div class="text">nach Bestehen</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">✅</div>
+        <div class="zahl">Rechtssicher</div>
+        <div class="text">archiviert 5 Jahre</div>
+      </div>
+    </div>
+
+    <div class="module-liste">
+      <div class="module-liste-header">Dein Kursprogramm</div>
+      <div class="modul-item">
+        <div class="modul-num">1</div>
+        <div class="modul-info">
+          <div class="modul-name">Persönliche Schutzausrüstung (PSA)</div>
+          <div class="modul-dauer">⏱ ca. 6 Min</div>
+        </div>
+      </div>
+      <div class="modul-item">
+        <div class="modul-num">2</div>
+        <div class="modul-info">
+          <div class="modul-name">Arbeiten in engen Räumen &amp; Schächten</div>
+          <div class="modul-dauer">⏱ ca. 7 Min</div>
+        </div>
+      </div>
+      <div class="modul-item">
+        <div class="modul-num">3</div>
+        <div class="modul-info">
+          <div class="modul-name">Gefahren bei der Kanalinspektion</div>
+          <div class="modul-dauer">⏱ ca. 7 Min</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="name-section">
+      <label for="ma-name">Dein Name (für das Zertifikat)</label>
+      <input type="text" id="ma-name" placeholder="z. B. Max Mustermann" />
+    </div>
+
+    <button class="btn btn-primary" onclick="startKurs()">
+      Jetzt Kurs starten →
+    </button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 1: EINHEIT 1 – PSA ============ -->
+<div class="screen" id="screen-e1">
+  <div class="header">
+    <div class="logo">Safe<span>Check</span></div>
+    <div class="badge">Einheit 1/3</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Fortschritt</span><span>0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:8%"></div></div>
+  </div>
+  <div class="content">
+    <div class="einheit-header">
+      <div class="einheit-tag">Einheit 1 · PSA</div>
+      <div class="einheit-titel">Persönliche Schutzausrüstung</div>
+      <div class="einheit-untertitel">Was du tragen musst – und warum. Pflicht nach DGUV Regel 112-189.</div>
+    </div>
+
+    <div class="video-placeholder">
+      <div class="play-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7 4l10 6-10 6V4z" fill="#1A1A2E"/>
+        </svg>
+      </div>
+      <div class="video-label">🎬 Lernvideo · ca. 3 Min (Demo)</div>
+    </div>
+
+    <div class="lerninhalt">
+      <h3>📖 Das Wichtigste zum Nachlesen</h3>
+      <p>Persönliche Schutzausrüstung (PSA) schützt dich vor Gefahren, die technisch oder organisatorisch nicht vollständig vermieden werden können. Das Tragen ist <strong>gesetzlich verpflichtend</strong> – kein Ermessensspielraum.</p>
+      <p>Bei der Rohrreinigung und Kanalinspektion gelten folgende PSA-Mindestanforderungen:</p>
+      <div class="psa-grid">
+        <div class="psa-item"><div class="dot"></div>Schutzhelm</div>
+        <div class="psa-item"><div class="dot"></div>Schutzbrille</div>
+        <div class="psa-item"><div class="dot"></div>Schutzhandschuhe</div>
+        <div class="psa-item"><div class="dot"></div>Sicherheitsstiefel</div>
+        <div class="psa-item"><div class="dot"></div>Warnweste</div>
+        <div class="psa-item"><div class="dot"></div>Schutzkleidung</div>
+      </div>
+      <div class="wichtig-box">
+        <div class="wichtig-titel">⚠️ Wichtig</div>
+        <p>Beschädigte oder abgelaufene PSA darf <strong>nicht</strong> verwendet werden. Melde Mängel sofort deinem Vorgesetzten. Die PSA wird vom Arbeitgeber gestellt – kostenlos für dich.</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bottom">
+    <button class="btn btn-primary" onclick="goTo('screen-e2')">Weiter zu Einheit 2 →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2: EINHEIT 2 – ENGE RÄUME ============ -->
+<div class="screen" id="screen-e2">
+  <div class="header">
+    <div class="logo">Safe<span>Check</span></div>
+    <div class="badge">Einheit 2/3</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Fortschritt</span><span>33%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+  </div>
+  <div class="content">
+    <div class="einheit-header">
+      <div class="einheit-tag">Einheit 2 · Arbeiten in Schächten</div>
+      <div class="einheit-titel">Enge Räume &amp; Schachtarbeiten</div>
+      <div class="einheit-untertitel">Besondere Gefahren, die du kennen musst. Grundlage: DGUV Regel 113-004.</div>
+    </div>
+
+    <div class="video-placeholder">
+      <div class="play-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7 4l10 6-10 6V4z" fill="#1A1A2E"/>
+        </svg>
+      </div>
+      <div class="video-label">🎬 Lernvideo · ca. 3 Min (Demo)</div>
+    </div>
+
+    <div class="lerninhalt">
+      <h3>📖 Das Wichtigste zum Nachlesen</h3>
+      <p>Schächte und enge Räume gelten als <strong>besonders gefährliche Arbeitsbereiche</strong>. Gefährliche Gase (z. B. Schwefelwasserstoff H₂S), Sauerstoffmangel und eingeschränkte Fluchtwege machen besondere Vorsicht nötig.</p>
+      <p><strong>Vor dem Einsteigen in einen Schacht gilt:</strong></p>
+      <div class="psa-grid">
+        <div class="psa-item"><div class="dot"></div>Gasmessung</div>
+        <div class="psa-item"><div class="dot"></div>Sicherungsposten</div>
+        <div class="psa-item"><div class="dot"></div>Rettungsgurt</div>
+        <div class="psa-item"><div class="dot"></div>Kommunikation</div>
+        <div class="psa-item"><div class="dot"></div>Freigabeschein</div>
+        <div class="psa-item"><div class="dot"></div>Fluchtplan</div>
+      </div>
+      <div class="wichtig-box">
+        <div class="wichtig-titel">⚠️ Niemals alleine</div>
+        <p>Kein Einsteigen ohne Sicherungsposten an der Oberfläche. Im Notfall muss immer jemand Hilfe holen können – das ist nicht verhandelbar.</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bottom">
+    <button class="btn btn-primary" onclick="goTo('screen-e3')">Weiter zu Einheit 3 →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: EINHEIT 3 – KANALINSPEKTION ============ -->
+<div class="screen" id="screen-e3">
+  <div class="header">
+    <div class="logo">Safe<span>Check</span></div>
+    <div class="badge">Einheit 3/3</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Fortschritt</span><span>66%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:66%"></div></div>
+  </div>
+  <div class="content">
+    <div class="einheit-header">
+      <div class="einheit-tag">Einheit 3 · Kanalinspektion</div>
+      <div class="einheit-titel">Gefahren bei der Kanalinspektion</div>
+      <div class="einheit-untertitel">Spezifische Risiken im Einsatz. Grundlage: DGUV Vorschrift 21.</div>
+    </div>
+
+    <div class="video-placeholder">
+      <div class="play-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7 4l10 6-10 6V4z" fill="#1A1A2E"/>
+        </svg>
+      </div>
+      <div class="video-label">🎬 Lernvideo · ca. 3 Min (Demo)</div>
+    </div>
+
+    <div class="lerninhalt">
+      <h3>📖 Das Wichtigste zum Nachlesen</h3>
+      <p>Bei der Kanalinspektion kommen besondere Gefahren hinzu: <strong>biologische Kontamination</strong>, Druckwasser, heiße Medien und elektrische Betriebsmittel im Nassbereich.</p>
+      <p><strong>Die häufigsten Unfallursachen im Kanal:</strong></p>
+      <div class="psa-grid">
+        <div class="psa-item"><div class="dot"></div>Ausrutschen/Sturz</div>
+        <div class="psa-item"><div class="dot"></div>Gasbelastung</div>
+        <div class="psa-item"><div class="dot"></div>Elektrogefahren</div>
+        <div class="psa-item"><div class="dot"></div>Infektion/Hygiene</div>
+        <div class="psa-item"><div class="dot"></div>Druckwasser</div>
+        <div class="psa-item"><div class="dot"></div>Einsturz</div>
+      </div>
+      <div class="wichtig-box">
+        <div class="wichtig-titel">🦠 Hygiene nach dem Einsatz</div>
+        <p>Hände gründlich desinfizieren, Schutzkleidung getrennt lagern, kein Essen oder Trinken ohne Händedesinfektion. Wunden sofort melden und versorgen lassen.</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bottom">
+    <button class="btn btn-primary" onclick="goTo('screen-quiz')">Zum Abschlussquiz →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 4: QUIZ ============ -->
+<div class="screen" id="screen-quiz">
+  <div class="header">
+    <div class="logo">Safe<span>Check</span></div>
+    <div class="badge">Quiz</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Fortschritt</span><span id="quiz-progress-label">75%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="quiz-progress-bar" style="width:75%"></div></div>
+  </div>
+  <div class="content">
+    <div class="quiz-header">
+      <h2>Abschlussquiz</h2>
+      <p>5 Fragen · Mindestens 80% zum Bestehen</p>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <button class="btn btn-primary" id="quiz-weiter-btn" onclick="quizWeiter()" style="display:none">Weiter →</button>
+    <button class="btn btn-primary" id="quiz-abschliessen-btn" onclick="quizAbschliessen()" style="display:none">Quiz abschließen ✓</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 5: ERGEBNIS ============ -->
+<div class="screen" id="screen-ergebnis">
+  <div class="header">
+    <div class="logo">Safe<span>Check</span></div>
+    <div class="badge">Ergebnis</div>
+  </div>
+  <div class="content">
+    <div class="ergebnis-hero">
+      <span class="ergebnis-icon" id="ergebnis-icon">🏆</span>
+      <h1 id="ergebnis-titel">Bestanden!</h1>
+      <p id="ergebnis-text">Herzlichen Glückwunsch. Du hast die Unterweisung erfolgreich abgeschlossen.</p>
+    </div>
+
+    <div class="score-card">
+      <div class="score-zahl" id="score-anzeige">100%</div>
+      <div class="score-label" id="score-detail">5 von 5 Fragen richtig</div>
+    </div>
+
+    <div class="zertifikat" id="zertifikat-box">
+      <div class="zert-logo">Safe<span>Check</span></div>
+      <div class="zert-titel">Nachweis der Arbeitssicherheitsunterweisung</div>
+      <div class="zert-name" id="zert-name-anzeige">Max Mustermann</div>
+      <div class="zert-details">
+        <div class="zert-zeile">✅ <strong>PSA-Grundlagen & Rohrreinigung</strong></div>
+        <div class="zert-zeile">📋 Einheit 1: Persönliche Schutzausrüstung</div>
+        <div class="zert-zeile">📋 Einheit 2: Arbeiten in engen Räumen</div>
+        <div class="zert-zeile">📋 Einheit 3: Gefahren Kanalinspektion</div>
+        <div class="zert-zeile">⚖️ Grundlage: § 12 ArbSchG</div>
+      </div>
+      <div class="zert-datum">
+        <span id="zert-datum-anzeige">13.06.2026</span>
+        <span>SafeCheck · Demo</span>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" onclick="nochmal()">↩ Nochmal von vorne</button>
+    <div class="spacer"></div>
+  </div>
+</div>
+
+<script>
+  // ---- STATE ----
+  let mitarbeiterName = '';
+  let quizFragen = [
+    {
+      frage: "Welche PSA ist bei der Rohrreinigung mindestens Pflicht?",
+      antworten: [
+        "Nur Handschuhe und Stiefel",
+        "Helm, Schutzbrille, Handschuhe, Stiefel und Warnweste",
+        "PSA ist freiwillig – jeder entscheidet selbst",
+        "Nur bei Arbeiten über 2 Meter Höhe"
+      ],
+      richtig: 1,
+      feedback_richtig: "Richtig! Diese PSA ist nach DGUV Regel 112-189 bei der Rohrreinigung Mindeststandard.",
+      feedback_falsch: "Leider falsch. Die korrekte Antwort ist: Helm, Schutzbrille, Handschuhe, Stiefel und Warnweste – alles zusammen, nicht nur Teile davon."
+    },
+    {
+      frage: "Ich finde meine Schutzbrille beschädigt. Was tue ich?",
+      antworten: [
+        "Weiterarbeiten – die Brille schützt ja trotzdem noch etwas",
+        "Klebeband draufkleben und weitermachen",
+        "Sofort dem Vorgesetzten melden und Ersatz anfordern",
+        "Nur bei gefährlichen Tätigkeiten Bescheid geben"
+      ],
+      richtig: 2,
+      feedback_richtig: "Genau richtig! Beschädigte PSA darf nicht verwendet werden – sofortige Meldung ist Pflicht.",
+      feedback_falsch: "Falsch. Beschädigte PSA ist sofort beim Vorgesetzten zu melden. Weiterarbeiten mit kaputter PSA ist verboten."
+    },
+    {
+      frage: "Was muss VOR dem Einsteigen in einen Schacht geprüft werden?",
+      antworten: [
+        "Ob der Schacht groß genug ist",
+        "Ob die Mittagspause schon vorbei ist",
+        "Gasmessung, Sicherungsposten, Rettungsgurt und Freigabeschein",
+        "Nur ob das Wetter gut ist"
+      ],
+      richtig: 2,
+      feedback_richtig: "Korrekt! Diese Punkte sind vor jedem Schachteinstieg zwingend zu prüfen.",
+      feedback_falsch: "Leider falsch. Vor dem Einsteigen müssen Gasmessung, Sicherungsposten, Rettungsgurt und Freigabeschein vorhanden sein."
+    },
+    {
+      frage: "Darf man alleine in einen Kanal einsteigen?",
+      antworten: [
+        "Ja, wenn man Erfahrung hat",
+        "Ja, bei kurzen Arbeiten unter 5 Minuten",
+        "Nein – immer mit Sicherungsposten an der Oberfläche",
+        "Ja, wenn man sein Handy dabei hat"
+      ],
+      richtig: 2,
+      feedback_richtig: "Richtig! Alleinarbeit in Schächten ist verboten. Der Sicherungsposten ist nicht verhandelbar.",
+      feedback_falsch: "Falsch. Kein Einsteigen ohne Sicherungsposten – egal wie kurz die Arbeit dauert oder wie erfahren man ist."
+    },
+    {
+      frage: "Was gehört zur richtigen Hygiene nach einem Kanaleinsatz?",
+      antworten: [
+        "Nur die Hände kurz abwischen",
+        "Hände desinfizieren, Schutzkleidung getrennt lagern, Wunden sofort melden",
+        "Das regelt der Betrieb – muss ich mir keine Gedanken machen",
+        "Duschen erst zuhause"
+      ],
+      richtig: 1,
+      feedback_richtig: "Sehr gut! Diese Hygienemaßnahmen schützen dich vor Infektionen durch biologische Kontamination.",
+      feedback_falsch: "Falsch. Die richtige Hygiene nach dem Einsatz: Hände desinfizieren, Schutzkleidung getrennt, Wunden sofort melden."
+    }
+  ];
+
+  let aktuelleFrageIdx = 0;
+  let richtigeAntworten = 0;
+  let frageBeantwortet = false;
+
+  // ---- NAVIGATION ----
+  function goTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function startKurs() {
+    const nameInput = document.getElementById('ma-name').value.trim();
+    mitarbeiterName = nameInput || 'Mitarbeiter';
+    goTo('screen-e1');
+  }
+
+  // ---- QUIZ LOGIC ----
+  function renderFrage() {
+    const frage = quizFragen[aktuelleFrageIdx];
+    const container = document.getElementById('quiz-container');
+    const total = quizFragen.length;
+    const pct = Math.round(75 + (aktuelleFrageIdx / total) * 25);
+    document.getElementById('quiz-progress-label').textContent = pct + '%';
+    document.getElementById('quiz-progress-bar').style.width = pct + '%';
+
+    let html = `
+      <div class="quiz-frage-wrap">
+        <div class="frage-num">Frage ${aktuelleFrageIdx + 1} von ${total}</div>
+        <div class="frage-text">${frage.frage}</div>
+        <div class="antworten">
+    `;
+    frage.antworten.forEach((a, i) => {
+      html += `<button class="antwort-btn" id="antwort-${i}" onclick="antwortWaehlen(${i})">
+        <div class="kreis"></div>${a}
+      </button>`;
+    });
+    html += `</div>
+      <div class="feedback-box" id="feedback-box"></div>
+    </div>`;
+    container.innerHTML = html;
+    frageBeantwortet = false;
+
+    const weiterBtn = document.getElementById('quiz-weiter-btn');
+    const abschliessenBtn = document.getElementById('quiz-abschliessen-btn');
+    weiterBtn.style.display = 'none';
+    abschliessenBtn.style.display = 'none';
+  }
+
+  function antwortWaehlen(idx) {
+    if (frageBeantwortet) return;
+    frageBeantwortet = true;
+    const frage = quizFragen[aktuelleFrageIdx];
+    const richtig = frage.richtig;
+    const feedbackBox = document.getElementById('feedback-box');
+
+    document.querySelectorAll('.antwort-btn').forEach((btn, i) => {
+      btn.style.pointerEvents = 'none';
+      if (i === richtig) btn.classList.add('richtig');
+      if (i === idx && idx !== richtig) btn.classList.add('falsch');
+    });
+
+    if (idx === richtig) {
+      richtigeAntworten++;
+      feedbackBox.className = 'feedback-box richtig';
+      feedbackBox.textContent = '✅ ' + frage.feedback_richtig;
+    } else {
+      feedbackBox.className = 'feedback-box falsch';
+      feedbackBox.textContent = '❌ ' + frage.feedback_falsch;
+    }
+
+    const istLetzte = (aktuelleFrageIdx === quizFragen.length - 1);
+    if (istLetzte) {
+      document.getElementById('quiz-abschliessen-btn').style.display = 'flex';
+    } else {
+      document.getElementById('quiz-weiter-btn').style.display = 'flex';
+    }
+  }
+
+  function quizWeiter() {
+    aktuelleFrageIdx++;
+    renderFrage();
+  }
+
+  function quizAbschliessen() {
+    const total = quizFragen.length;
+    const pct = Math.round((richtigeAntworten / total) * 100);
+    const bestanden = pct >= 80;
+
+    document.getElementById('score-anzeige').textContent = pct + '%';
+    document.getElementById('score-detail').textContent = richtigeAntworten + ' von ' + total + ' Fragen richtig';
+    document.getElementById('zert-name-anzeige').textContent = mitarbeiterName;
+
+    const heute = new Date();
+    const datum = heute.toLocaleDateString('de-DE');
+    document.getElementById('zert-datum-anzeige').textContent = datum;
+
+    if (bestanden) {
+      document.getElementById('ergebnis-icon').textContent = '🏆';
+      document.getElementById('ergebnis-titel').textContent = 'Bestanden!';
+      document.getElementById('ergebnis-text').textContent = 'Herzlichen Glückwunsch, ' + mitarbeiterName + '! Du hast die Unterweisung erfolgreich abgeschlossen.';
+      document.getElementById('zertifikat-box').style.display = 'block';
+    } else {
+      document.getElementById('ergebnis-icon').textContent = '😕';
+      document.getElementById('ergebnis-titel').textContent = 'Nicht bestanden';
+      document.getElementById('ergebnis-text').textContent = 'Du hast ' + pct + '% erreicht. Für das Zertifikat werden 80% benötigt. Bitte nochmals wiederholen.';
+      document.getElementById('zertifikat-box').style.display = 'none';
+    }
+
+    goTo('screen-ergebnis');
+  }
+
+  function nochmal() {
+    aktuelleFrageIdx = 0;
+    richtigeAntworten = 0;
+    frageBeantwortet = false;
+    document.getElementById('ma-name').value = '';
+    goTo('screen-welcome');
+  }
+
+  // Init quiz when screen is reached
+  document.getElementById('screen-quiz').addEventListener('transitionend', function() {});
+  const origGoTo = goTo;
+  window.goTo = function(id) {
+    origGoTo(id);
+    if (id === 'screen-quiz') {
+      aktuelleFrageIdx = 0;
+      richtigeAntworten = 0;
+      renderFrage();
+    }
+  };
+</script>
+</body>
+</html>
